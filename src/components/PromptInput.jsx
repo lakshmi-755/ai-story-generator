@@ -31,11 +31,17 @@ const PromptInput = ({
         };
     };
 
+    const handleVoiceRecord = () => {
+        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+        if (!SpeechRecognition) {
+            alert('Your browser does not support speech recognition. Please try Chrome.');
+            return;
+        }
 
-    // 2. Clear old state
-    setVoiceInput('🎧 Listening...');
+        // 2. Clear old state
+        setVoiceInput('🎧 Listening...');
 
-    const recognition = new SpeechRecognition();
+        const recognition = new SpeechRecognition();
     recognition.lang = 'en-US';
     recognition.interimResults = false;
     recognition.maxAlternatives = 1;
