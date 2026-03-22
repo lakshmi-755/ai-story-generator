@@ -49,9 +49,10 @@ You are a visual storyteller and AI image prompt engineer. Your task is to extra
 Return ONLY a raw JSON array of strings. Each string is a single-sentence image generation prompt.
 Rules:
 1. Extract exactly ${sceneCount} scenes.
-2. Each scene must be a short description of an important visual moment.
-3. Each scene MUST be exactly one sentence.
-4. Return ONLY the JSON array: ["scene 1...", "scene 2..."]<|eot_id|><|start_header_id|>user<|end_header_id|>
+2. Each scene must be a description of an important visual moment.
+3. CRITICAL: Identify the main character's physical description in the story (age, hair, eye color, etc.) and YOU MUST include that exact full physical description in EVERY SINGLE SCENE PROMPT. Never just say "a boy" or "a girl".
+4. Each scene MUST be exactly one sentence.
+5. Return ONLY the JSON array: ["scene 1...", "scene 2..."]<|eot_id|><|start_header_id|>user<|end_header_id|>
 
 Story:
 ${storyText}

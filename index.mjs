@@ -20,6 +20,8 @@ export const handler = async (event) => {
         const bodyText = event.isBase64Encoded ? Buffer.from(event.body, 'base64').toString() : event.body;
         const data = JSON.parse(bodyText || "{}");
 
+
+
         // 1. Precise Dynamic parameters
         let maxGenLen = 600;
         let detailLevel = "a short, magical children's story";

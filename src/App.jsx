@@ -12,6 +12,7 @@ import StoryOutput from './components/StoryOutput';
 const API_URL = 'https://11u1l1nun3.execute-api.us-east-1.amazonaws.com/generate';
 const SCENE_API_URL = 'https://3in2oeru47.execute-api.us-east-1.amazonaws.com/scene';
 const IMAGE_API_URL = 'https://vbkr23srrd.execute-api.us-east-1.amazonaws.com/image_handler'; // 🖼️ Real AI Image Generation API
+const VISION_API_URL = 'https://it14gyee39.execute-api.us-east-1.amazonaws.com/vision'; // 👁️ Vision Lambda API
 
 /* ─── Loading Overlay ───────────────────────────────────────── */
 const LoadingOverlay = ({ status }) => (
@@ -24,10 +25,10 @@ const LoadingOverlay = ({ status }) => (
       </div>
     </div>
     <p className="text-xl font-black text-purple-600 animate-pulse">
-      {status === 'scenes' ? 'Visualizing Scenes…' : status === 'images' ? 'Generating Magic Visuals…' : 'Generating your story…'}
+      {status === 'vision' ? 'Analyzing uploaded image...' : status === 'scenes' ? 'Visualizing Scenes…' : status === 'images' ? 'Generating Magic Visuals…' : 'Generating your story…'}
     </p>
     <p className="text-sm text-purple-400 font-semibold mt-1 text-center">
-      {status === 'scenes' ? 'Creating magical image prompts 🎨' : status === 'images' ? 'Drawing scenes with AI magic 🖌️' : 'Weaving magic words together 🪄'}
+      {status === 'vision' ? 'Extracting physical traits 👁️' : status === 'scenes' ? 'Creating magical image prompts 🎨' : status === 'images' ? 'Drawing scenes with AI magic 🖌️' : 'Weaving magic words together 🪄'}
     </p>
   </div>
 );
@@ -54,6 +55,32 @@ function App() {
     setStoryOutput(null);
 
     try {
+      let finalPrompt = userPrompt;
+
+      // 0. Extract Vision Traits if image exists
+      if (imageInput && imageInput.base64 && VISION_API_URL && !VISION_API_URL.includes('REPLACE')) {
+        setLoadingStatus('vision');
+        try {
+          const visionRes = await fetch(VISION_API_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ imageBase64: imageInput.base64 })
+          });
+          if (visionRes.ok) {
+            const visionData = await visionRes.json();
+            if (visionData.traits) {
+               finalPrompt = `The main character is a ${visionData.traits}. ` + finalPrompt;
+            }
+          } else {
+             console.error('Vision API responded with error', visionRes.status);
+          }
+        } catch (e) {
+          console.error('Vision extraction network failed:', e);
+        }
+      }
+
+      setLoadingStatus('story');
+
       // 1. Generate Story Text
       const response = await fetch(API_URL, {
         method: 'POST',
@@ -62,8 +89,10 @@ function App() {
           genre: selectedGenre,
           storyLength: storyLength,
           ageGroup: ageGroup,
-          userPrompt: userPrompt,
+          userPrompt: finalPrompt
         }),
+
+
       });
 
       if (!response.ok) {

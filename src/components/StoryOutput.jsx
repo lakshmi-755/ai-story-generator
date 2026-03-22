@@ -4,12 +4,6 @@ import { useState, useEffect } from "react";
 
 /* ---------- helpers ---------- */
 
-const imagePlaceholders = [
-    { emoji: "🌄", label: "Scene Illustration" },
-    { emoji: "🐲", label: "Character Illustration" },
-    { emoji: "🏰", label: "Setting Illustration" }
-];
-
 const splitIntoParagraphs = (text) =>
     text
         .split(/\n+/)
@@ -232,7 +226,7 @@ const StoryOutput = ({ storyOutput, storyFormat, onClear }) => {
 
                                 {withImages && (paraIdx + 1) % 2 === 0 && paraIdx !== paragraphs.length - 1 && (
                                     <div className="my-6 animate-fade-in">
-                                        {storyOutput.images && storyOutput.images[Math.floor(paraIdx / 2)] ? (
+                                        {storyOutput.images && storyOutput.images[Math.floor(paraIdx / 2)] && (
                                             <div className="relative group overflow-hidden rounded-2xl shadow-lg border-2 border-purple-100">
                                                 <img
                                                     src={storyOutput.images[Math.floor(paraIdx / 2)]}
@@ -243,21 +237,6 @@ const StoryOutput = ({ storyOutput, storyFormat, onClear }) => {
                                                     <p className="text-white text-xs font-medium italic">
                                                         {storyOutput.scenes?.[Math.floor(paraIdx / 2)]}
                                                     </p>
-                                                </div>
-                                            </div>
-                                        ) : (
-                                            <div className="flex items-center justify-center bg-gradient-to-br from-purple-100 via-pink-50 to-yellow-100 rounded-2xl h-36 border-2 border-dashed border-purple-300 px-6">
-                                                <div className="text-center text-purple-400">
-                                                    <div className="text-5xl mb-2">
-                                                        {imagePlaceholders[Math.floor(paraIdx / 2) % imagePlaceholders.length].emoji}
-                                                    </div>
-                                                    <p className="font-bold text-sm text-purple-600 leading-tight">
-                                                        {storyOutput.scenes && storyOutput.scenes[Math.floor(paraIdx / 2)]
-                                                            ? `"${storyOutput.scenes[Math.floor(paraIdx / 2)]}"`
-                                                            : imagePlaceholders[Math.floor(paraIdx / 2) % imagePlaceholders.length].label
-                                                        }
-                                                    </p>
-                                                    <p className="text-xs text-purple-400 mt-2">[AI Vision Concept]</p>
                                                 </div>
                                             </div>
                                         )}
